@@ -1,14 +1,14 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../config'; // Ajusta la ruta según sea necesario
 
-interface TaskStatusAttributes {
+export interface TaskStatusAttributes {
     id: number;
     taskStatusLabel: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-interface TaskStatusCreationAttributes extends Optional<TaskStatusAttributes, 'id'> {}
+export interface TaskStatusCreationAttributes extends Optional<TaskStatusAttributes, 'id'> {}
 
 class TaskStatus extends Model<TaskStatusAttributes, TaskStatusCreationAttributes> implements TaskStatusAttributes {
     public id!: number;

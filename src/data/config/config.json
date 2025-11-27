@@ -3,7 +3,7 @@
     "username": "admin",
     "password": "ou260802",
     "database": "tareas",
-    "host": "192.168.100.203",
+    "host": "127.0.0.1",
     "dialect": "mariadb"
   },
   "test": {

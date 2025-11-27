@@ -1,5 +1,12 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
+##Project specific files
+sql_backup/
+.vscode/
+.env.development
+.env.production
+sequelize.sqbpro
+sequelize.sqlite
 
 ### Node ###
 # Logs

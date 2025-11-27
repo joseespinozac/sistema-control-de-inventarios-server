@@ -1,6 +1,7 @@
 import { DataTypes, HasOneGetAssociationMixin, HasOneSetAssociationMixin, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../config'; // Ajusta la ruta según sea necesario
 import Team from './team-model.sequelize'; // Modelo Team
+import User from './user-model.sequelize';
 
 interface ProjectAttributes {
     id: number;
@@ -8,6 +9,7 @@ interface ProjectAttributes {
     projectBeginDate: string;
     projectEndDate: string;
     projectDescription: string;
+    members?: User[];
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -22,6 +24,8 @@ class Project extends Model<ProjectAttributes, ProjectCreationAttributes> implem
     public projectDescription!: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+
+    public members: User[] = []; // Añade esta propiedad
 
     declare setTeam: HasOneSetAssociationMixin<Team, Team['id']>;
     declare getTeam: HasOneGetAssociationMixin<Team>;

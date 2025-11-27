@@ -2,6 +2,8 @@ import { BelongsToManyGetAssociationsMixin, DataTypes, HasManyGetAssociationsMix
 import sequelizeConnection from '../config';
 import Role from './user-role-model.sequelize';
 import Team from './team-model.sequelize';
+import bcrypt from 'bcryptjs';
+
 interface UserAttributes {
     id: number;
     username: string;
@@ -28,8 +30,11 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public readonly updatedAt!: Date;
 
     declare getTeams: BelongsToManyGetAssociationsMixin<Team>;
-
     declare getOwnerTeam: HasManyGetAssociationsMixin<Team>;
+
+    public async verifyPassword(password: string): Promise<boolean> {
+        return bcrypt.compare(password, this.password);
+    }
 
 }
 
@@ -71,9 +76,25 @@ User.init(
     },
     {
         tableName: 'user',
-        sequelize: sequelizeConnection, // passing the `sequelize` instance is required
+        sequelize: sequelizeConnection,
         updatedAt: 'user_updated_at',
         createdAt: 'user_created_at',
+        defaultScope: {
+            attributes: { exclude: ['password'] }
+        },
+        scopes: {
+            withPassword: { attributes: undefined }
+        },
+        hooks: {
+            beforeCreate: async (user: User) => {
+                user.password = await bcrypt.hash(user.password, 10);
+              },
+            beforeUpdate: async (user: User) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 10);
+            }
+            }
+        }
     }
 );
 
