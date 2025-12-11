@@ -4,7 +4,7 @@ import sequelizeConnection from "../config";
 export interface EntryAttributes {
     id: string;
     entryNumber: string;
-    entryType: "purchase" | "return" | "adjustment";
+    entryType: "purchase" | "return" | "adjustment" | "donation";
     notes: string;
     status: "pending" | "completed" | "canceled" | "rejected";
     rejectionReason?: string;
