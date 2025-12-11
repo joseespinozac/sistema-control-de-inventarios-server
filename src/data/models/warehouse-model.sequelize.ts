@@ -1,11 +1,14 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
+import User from "./user-model.sequelize";
+import Inventory from "./inventory-model.sequelize";
 
 export interface WarehouseAttributes {
     id: string;
     name: string;
     description: string;
     location: string;
+    isActive: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -21,6 +24,7 @@ export class Warehouse
     public name!: string;
     public description!: string;
     public location!: string;
+    public isActive!: boolean;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -49,6 +53,12 @@ Warehouse.init(
             allowNull: false,
             field: "warehouse_location",
         },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+            field: "warehouse_is_active",
+        },
     },
     {
         sequelize: sequelizeConnection,
@@ -57,3 +67,21 @@ Warehouse.init(
         createdAt: "warehouse_created_at",
     }
 );
+
+Warehouse.belongsTo(User, {
+    foreignKey: {
+        name: "manager_id",
+        allowNull: false,
+    },
+    as: "manager",
+});
+
+Warehouse.belongsTo(Inventory, {
+    foreignKey: {
+        name: "inventory_id",
+        allowNull: false,
+    },
+    as: "inventory",
+});
+
+export default Warehouse;

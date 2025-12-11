@@ -9,13 +9,16 @@ import sequelizeConnection from "../config";
 import MeasureUnit from "./measure-unit.model.sequelize";
 import Category from "./category-model.sequelize";
 import Brand from "./brand-model.sequelize";
+import Warehouse from "./warehouse-model.sequelize";
 
 export interface ProductAttributes {
-    id: number;
+    id: string;
     name: string;
     description: string;
     unitQty: number;
-    stock: number;
+    min_stock: number;
+    max_stock: number;
+    profit_margin: number;
     currentPrice: number;
     sku: string;
     barcode: string;
@@ -32,7 +35,7 @@ export class Product
     extends Model<ProductAttributes, ProductCreationAttributes>
     implements ProductAttributes
 {
-    public id!: number;
+    public id!: string;
     public name!: string;
     public description!: string;
     public unitQty!: number;
@@ -40,6 +43,9 @@ export class Product
     public currentPrice!: number;
     public sku!: string;
     public barcode!: string;
+    public min_stock!: number;
+    public max_stock!: number;
+    public profit_margin!: number;
     public images!: string[];
     public isActive!: boolean;
     public readonly createdAt!: Date;
@@ -62,9 +68,9 @@ export class Product
 Product.init(
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.UUID,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue: DataTypes.UUIDV4,
             field: "product_id",
         },
         name: {
@@ -82,10 +88,20 @@ Product.init(
             allowNull: false,
             field: "product_unit_qty",
         },
-        stock: {
+        min_stock: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
-            field: "product_stock",
+            field: "product_min_stock",
+        },
+        max_stock: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: false,
+            field: "product_max_stock",
+        },
+        profit_margin: {
+            type: DataTypes.DECIMAL(5, 2),
+            allowNull: false,
+            field: "product_profit_margin",
         },
         currentPrice: {
             type: DataTypes.DECIMAL(10, 2),
@@ -155,6 +171,19 @@ Product.belongsTo(Brand, {
 
 Brand.hasMany(Product, {
     foreignKey: "brand_id",
+    as: "products",
+});
+
+Product.belongsTo(Warehouse, {
+    foreignKey: {
+        allowNull: false,
+        name: "warehouse_id",
+    },
+    as: "warehouse",
+});
+
+Warehouse.hasMany(Product, {
+    foreignKey: "warehouse_id",
     as: "products",
 });
 

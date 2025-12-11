@@ -30,19 +30,13 @@ export class ProductRepository {
 
         // Actualiza las relaciones
         if (updatedProduct.categoryId) {
-            await product.setCategory(
-                StringUtil.parseStringToNumber(updatedProduct.categoryId)
-            );
+            await product.setCategory(updatedProduct.categoryId);
         }
         if (updatedProduct.brandId) {
-            await product.setBrand(
-                StringUtil.parseStringToNumber(updatedProduct.brandId)
-            );
+            await product.setBrand(updatedProduct.brandId);
         }
         if (updatedProduct.measureUnitId) {
-            await product.setMeasureUnit(
-                StringUtil.parseStringToNumber(updatedProduct.measureUnitId)
-            );
+            await product.setMeasureUnit(updatedProduct.measureUnitId);
         }
 
         // Recargar el producto para obtener los datos actualizados

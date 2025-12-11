@@ -2,7 +2,7 @@ import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
 
 export interface CategoryAttributes {
-    id: number;
+    id: string;
     name: string;
     description?: string;
     createdAt?: Date;
@@ -16,7 +16,7 @@ class Category
     extends Model<CategoryAttributes, CategoryCreationAttributes>
     implements CategoryAttributes
 {
-    public id!: number;
+    public id!: string;
     public name!: string;
     public description?: string;
     public readonly createdAt!: Date;
@@ -26,9 +26,9 @@ class Category
 Category.init(
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.UUID,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue: DataTypes.UUIDV4,
             field: "category_id",
         },
         name: {

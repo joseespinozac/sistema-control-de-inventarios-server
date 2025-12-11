@@ -1,27 +1,31 @@
 // src/data/models/client-model.sequelize.ts
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelizeConnection from '../config';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelizeConnection from "../config";
 
 interface ClientAttributes {
-  clientId: number;
-  clientSecret: string;
-  redirectUris: string;
+    clientId: string;
+    clientSecret: string;
+    redirectUris: string;
 }
 
-export interface ClientCreationAttributes extends Optional<ClientAttributes, 'clientId'> {}
+export interface ClientCreationAttributes
+    extends Optional<ClientAttributes, "clientId"> {}
 
-class Client extends Model<ClientAttributes, ClientCreationAttributes> implements ClientAttributes {
-  public clientId!: number;
-  public clientSecret!: string;
-  public redirectUris!: string;
+class Client
+    extends Model<ClientAttributes, ClientCreationAttributes>
+    implements ClientAttributes
+{
+    public clientId!: string;
+    public clientSecret!: string;
+    public redirectUris!: string;
 }
 
 Client.init(
     {
         clientId: {
-            type: DataTypes.INTEGER.UNSIGNED,
-            autoIncrement: true,
+            type: DataTypes.UUID,
             primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
         },
         clientSecret: {
             type: DataTypes.STRING,
@@ -31,16 +35,16 @@ Client.init(
             type: DataTypes.TEXT, // Change this to TEXT to store JSON string
             allowNull: false,
             get() {
-                const value = this.getDataValue('redirectUris');
+                const value = this.getDataValue("redirectUris");
                 return value ? JSON.parse(value) : [];
             },
             set(value: string[]) {
-                this.setDataValue('redirectUris', JSON.stringify(value));
+                this.setDataValue("redirectUris", JSON.stringify(value));
             },
         },
     },
     {
-        tableName: 'clients',
+        tableName: "clients",
         sequelize: sequelizeConnection,
     }
 );

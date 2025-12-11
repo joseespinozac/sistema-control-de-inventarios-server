@@ -6,9 +6,9 @@ export interface NewProductDto {
     sku: string;
     barcode: string;
     isActive: boolean;
-    categoryId: number;
-    brandId: number;
-    measureUnitId: number;
+    categoryId: string;
+    brandId: string;
+    measureUnitId: string;
 }
 
 export interface UpdateProductDto {
@@ -19,9 +19,9 @@ export interface UpdateProductDto {
     sku?: string;
     barcode?: string;
     isActive?: boolean;
-    categoryId?: number;
-    brandId?: number;
-    measureUnitId?: number;
+    categoryId?: string;
+    brandId?: string;
+    measureUnitId?: string;
     removedImages?: string[];
     newImages?: string[];
 }

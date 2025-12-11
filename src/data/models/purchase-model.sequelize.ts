@@ -3,7 +3,7 @@ import sequelizeConnection from "../config";
 import PurchaseItem from "./purchase-item-model.sequelize";
 
 export interface PurchaseAttributes {
-    id: number;
+    id: string;
     supplierName: string;
     status: string;
     total: number;
@@ -20,7 +20,7 @@ class Purchase
     extends Model<PurchaseAttributes, PurchaseCreationAttributes>
     implements PurchaseAttributes
 {
-    public id!: number;
+    public id!: string;
     public supplierName!: string;
     public status!: string;
     public total!: number;
@@ -33,9 +33,9 @@ class Purchase
 Purchase.init(
     {
         id: {
-            type: DataTypes.INTEGER.UNSIGNED,
+            type: DataTypes.UUID,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue: DataTypes.UUIDV4,
             field: "purchase_id",
         },
         supplierName: {

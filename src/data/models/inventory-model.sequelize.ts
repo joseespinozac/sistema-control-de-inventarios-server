@@ -7,7 +7,7 @@ export interface InventoryAttributes {
     id: string;
     name: string;
     lowStockThreshold: number;
-    settings: object | null;
+    // settings: object | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -22,7 +22,7 @@ export class Inventory
     public id!: string;
     public name!: string;
     public lowStockThreshold!: number;
-    public settings!: object | null;
+    // public settings!: object | null;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -46,11 +46,11 @@ Inventory.init(
             defaultValue: 5,
             field: "inventory_low_stock_threshold",
         },
-        settings: {
-            type: DataTypes.JSON,
-            allowNull: true,
-            field: "inventory_settings",
-        },
+        // settings: {
+        //     type: DataTypes.JSON,
+        //     allowNull: true,
+        //     field: "inventory_settings",
+        // },
     },
     {
         sequelize: sequelizeConnection,

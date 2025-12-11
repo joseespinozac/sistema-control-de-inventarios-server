@@ -27,19 +27,13 @@ export class ProductService {
             images,
         });
         if (newProduct.categoryId) {
-            product.setCategory(
-                StringUtil.parseStringToNumber(newProduct.categoryId)
-            );
+            product.setCategory(newProduct.categoryId);
         }
         if (newProduct.brandId) {
-            product.setBrand(
-                StringUtil.parseStringToNumber(newProduct.brandId)
-            );
+            product.setBrand(newProduct.brandId);
         }
         if (newProduct.measureUnitId) {
-            product.setMeasureUnit(
-                StringUtil.parseStringToNumber(newProduct.measureUnitId)
-            );
+            product.setMeasureUnit(newProduct.measureUnitId);
         }
         return product;
     }

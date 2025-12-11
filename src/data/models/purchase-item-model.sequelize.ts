@@ -2,7 +2,7 @@ import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
 import Product from "./product.model.sequelize";
 export interface PurchaseItemAttributes {
-    id: number;
+    id: string;
     quantity: number;
     unitCost: number;
     totalCost: number;
@@ -18,7 +18,7 @@ class PurchaseItem
     extends Model<PurchaseItemAttributes, PurchaseItemCreationAttributes>
     implements PurchaseItemAttributes
 {
-    public id!: number;
+    public id!: string;
     public quantity!: number;
     public unitCost!: number;
     public totalCost!: number;
@@ -30,9 +30,9 @@ class PurchaseItem
 PurchaseItem.init(
     {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
+            type: DataTypes.UUID,
             primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
             field: "purchase_item_id",
         },
         quantity: {

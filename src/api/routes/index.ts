@@ -16,9 +16,9 @@ const router = Router();
 router.use("/uploads", _static("uploads"));
 
 router.use("/users", authenticate, UsersRouter);
-router.use("/teams", authenticate, TeamsRouter);
-router.use("/projects", authenticate, ProjectsRouter);
-router.use("/tasks", authenticate, TaskRouter);
+// router.use("/teams", authenticate, TeamsRouter);
+// router.use("/projects", authenticate, ProjectsRouter);
+// router.use("/tasks", authenticate, TaskRouter);
 router.use("/brands", authenticate, BrandRouter);
 router.use("/categories", authenticate, CategoryRouter);
 router.use("/measure-units", authenticate, MeasureUnitRouter);

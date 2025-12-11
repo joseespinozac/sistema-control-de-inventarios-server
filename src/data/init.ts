@@ -105,113 +105,95 @@ const dbInit = async () => {
             },
         ];
 
-        const taskStatuses: TaskStatusCreationAttributes[] = [
-            {
-                id: 1,
-                taskStatusLabel: "Sin Iniciar",
-            },
-            {
-                id: 2,
-                taskStatusLabel: "En Progreso",
-            },
-            {
-                id: 3,
-                taskStatusLabel: "Cancelado",
-            },
-            {
-                id: 4,
-                taskStatusLabel: "Completado",
-            },
-        ];
+        // const taskStatuses: TaskStatusCreationAttributes[] = [
+        //     {
+        //         id: 1,
+        //         taskStatusLabel: "Sin Iniciar",
+        //     },
+        //     {
+        //         id: 2,
+        //         taskStatusLabel: "En Progreso",
+        //     },
+        //     {
+        //         id: 3,
+        //         taskStatusLabel: "Cancelado",
+        //     },
+        //     {
+        //         id: 4,
+        //         taskStatusLabel: "Completado",
+        //     },
+        // ];
 
         const initialMeasureUnits = [
             {
-                id: 1,
                 name: "Kilogramo",
                 abbreviation: "kg",
             },
             {
-                id: 2,
                 name: "Litro",
                 abbreviation: "L",
             },
             {
-                id: 3,
                 name: "Metro",
                 abbreviation: "m",
             },
             {
-                id: 4,
                 name: "Unidad",
                 abbreviation: "u",
             },
             {
-                id: 5,
                 name: "Centímetro",
                 abbreviation: "cm",
             },
             {
-                id: 6,
                 name: "Milímetro",
                 abbreviation: "mm",
             },
             {
-                id: 7,
                 name: "Gramo",
                 abbreviation: "g",
             },
             {
-                id: 8,
                 name: "Pulgada",
                 abbreviation: "in",
             },
             {
-                id: 9,
                 name: "Yarda",
                 abbreviation: "yd",
             },
             {
-                id: 10,
                 name: "Onza",
                 abbreviation: "oz",
             },
             {
-                id: 11,
                 name: "Galón",
                 abbreviation: "gal",
             },
             {
-                id: 12,
                 name: "Cuarto",
                 abbreviation: "qt",
             },
             {
-                id: 13,
                 name: "Pinta",
                 abbreviation: "pt",
             },
             {
-                id: 14,
                 name: "Taza",
                 abbreviation: "taza",
             },
             {
-                id: 15,
                 name: "Cucharada",
                 abbreviation: "cucharada",
             },
             {
-                id: 16,
                 name: "Cucharadita",
                 abbreviation: "cucharadita",
             },
             {
-                id: 17,
                 name: "Mililitro",
                 abbreviation: "ml",
             },
             {
-                id: 18,
                 name: "Centilitro",
                 abbreviation: "cl",
             },
@@ -297,9 +279,9 @@ const dbInit = async () => {
 
         if (isBulkCreateActive) {
             await Client.bulkCreate(initialClients, { ignoreDuplicates: true });
-            await TaskStatus.bulkCreate(taskStatuses, {
-                ignoreDuplicates: true,
-            });
+            // await TaskStatus.bulkCreate(taskStatuses, {
+            //     ignoreDuplicates: true,
+            // });
             await MeasureUnit.bulkCreate(initialMeasureUnits, {
                 ignoreDuplicates: true,
             });
