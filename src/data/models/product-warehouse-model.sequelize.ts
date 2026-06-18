@@ -6,14 +6,14 @@ export interface ProductWarehouseAttributes {
     stock: number;
     minStock: number;
     maxStock: number;
-    profitMargin?: number;
-    currentPrice?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface ProductWarehouseCreationAttributes
-    extends Optional<ProductWarehouseAttributes, "id"> {}
+export interface ProductWarehouseCreationAttributes extends Optional<
+    ProductWarehouseAttributes,
+    "id"
+> {}
 
 export class ProductWarehouse
     extends Model<
@@ -26,8 +26,6 @@ export class ProductWarehouse
     public stock!: number;
     public minStock!: number;
     public maxStock!: number;
-    public profitMargin?: number;
-    public currentPrice?: number;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -58,23 +56,13 @@ ProductWarehouse.init(
             defaultValue: 0,
             field: "product_warehouse_max_stock",
         },
-        profitMargin: {
-            type: DataTypes.DECIMAL(5, 2),
-            allowNull: true,
-            field: "product_warehouse_profit_margin",
-        },
-        currentPrice: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: true,
-            field: "product_warehouse_current_price",
-        },
     },
     {
         sequelize: sequelizeConnection,
         tableName: "product_warehouses",
         updatedAt: "product_warehouse_updated_at",
         createdAt: "product_warehouse_created_at",
-    }
+    },
 );
 
 export default ProductWarehouse;

@@ -20,7 +20,7 @@ export class ProductService {
 
     async createProduct(
         newProduct: NewProductDto,
-        images: string[]
+        images: string[],
     ): Promise<Product> {
         const product = await this.productRepository.createProduct({
             ...newProduct,
@@ -39,8 +39,8 @@ export class ProductService {
     }
 
     async updateProduct(
-        productId: number,
-        updatedProduct: UpdateProductDto
+        productId: string,
+        updatedProduct: UpdateProductDto,
     ): Promise<Product> {
         const product = await this.productRepository.findProductById(productId);
         if (!product) {
@@ -61,7 +61,7 @@ export class ProductService {
                         console.log(err);
                     });
                     updatedImages = updatedImages.filter(
-                        (img) => img !== image
+                        (img) => img !== image,
                     );
                 }
             });
@@ -76,11 +76,11 @@ export class ProductService {
         return this.productRepository.updateProduct(
             product,
             updatedProduct,
-            updatedImages
+            updatedImages,
         );
     }
 
-    async deleteProduct(productId: number) {
+    async deleteProduct(productId: string) {
         const product = await this.productRepository.findProductById(productId);
         if (!product) {
             throw new NotFoundError("Product not found");
@@ -88,7 +88,7 @@ export class ProductService {
         return this.productRepository.deleteProduct(product);
     }
 
-    async getProduct(productId: number): Promise<Product> {
+    async getProduct(productId: string): Promise<Product> {
         const product = await this.productRepository.findProductById(productId);
         if (!product) {
             throw new NotFoundError("Product not found");

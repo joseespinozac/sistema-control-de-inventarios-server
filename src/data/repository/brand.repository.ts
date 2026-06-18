@@ -5,7 +5,7 @@ export class BrandRepository {
         return Brand.create(data);
     }
 
-    async findBrandById(brandId: number) {
+    async findBrandById(brandId: string) {
         return await Brand.findByPk(brandId);
     }
 

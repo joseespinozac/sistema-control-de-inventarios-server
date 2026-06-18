@@ -6,10 +6,9 @@ import {
     Optional,
 } from "sequelize";
 import sequelizeConnection from "../config";
-import MeasureUnit from "./measure-unit.model.sequelize";
-import Category from "./category-model.sequelize";
-import Brand from "./brand-model.sequelize";
-import Warehouse from "./warehouse-model.sequelize";
+import type MeasureUnit from "./measure-unit.model.sequelize";
+import type Category from "./category-model.sequelize";
+import type Brand from "./brand-model.sequelize";
 
 export interface ProductAttributes {
     id: string;
@@ -28,8 +27,10 @@ export interface ProductAttributes {
     updatedAt?: Date;
 }
 
-export interface ProductCreationAttributes
-    extends Optional<ProductAttributes, "id"> {}
+export interface ProductCreationAttributes extends Optional<
+    ProductAttributes,
+    "id"
+> {}
 
 export class Product
     extends Model<ProductAttributes, ProductCreationAttributes>
@@ -39,7 +40,6 @@ export class Product
     public name!: string;
     public description!: string;
     public unitQty!: number;
-    public stock!: number;
     public currentPrice!: number;
     public sku!: string;
     public barcode!: string;
@@ -51,15 +51,15 @@ export class Product
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    public declare getCategory: HasOneGetAssociationMixin<Category>;
-    public declare setCategory: HasOneSetAssociationMixin<
+    declare public getCategory: HasOneGetAssociationMixin<Category>;
+    declare public setCategory: HasOneSetAssociationMixin<
         Category,
         Category["id"]
     >;
-    public declare getBrand: HasOneGetAssociationMixin<Brand>;
-    public declare setBrand: HasOneSetAssociationMixin<Brand, Brand["id"]>;
-    public declare getMeasureUnit: HasOneGetAssociationMixin<MeasureUnit>;
-    public declare setMeasureUnit: HasOneSetAssociationMixin<
+    declare public getBrand: HasOneGetAssociationMixin<Brand>;
+    declare public setBrand: HasOneSetAssociationMixin<Brand, Brand["id"]>;
+    declare public getMeasureUnit: HasOneGetAssociationMixin<MeasureUnit>;
+    declare public setMeasureUnit: HasOneSetAssociationMixin<
         MeasureUnit,
         MeasureUnit["id"]
     >;
@@ -135,56 +135,7 @@ Product.init(
         updatedAt: "product_updated_at",
         createdAt: "product_created_at",
         sequelize: sequelizeConnection,
-    }
+    },
 );
-
-Product.belongsTo(MeasureUnit, {
-    foreignKey: "measure_unit_id",
-    as: "measureUnit",
-});
-
-MeasureUnit.hasMany(Product, {
-    foreignKey: "measure_unit_id",
-    as: "products",
-});
-
-Product.belongsTo(Category, {
-    foreignKey: {
-        name: "category_id",
-        allowNull: true,
-    },
-    as: "category",
-});
-
-Category.hasMany(Product, {
-    foreignKey: "category_id",
-    as: "products",
-});
-
-Product.belongsTo(Brand, {
-    foreignKey: {
-        name: "brand_id",
-        allowNull: true,
-    },
-    as: "brand",
-});
-
-Brand.hasMany(Product, {
-    foreignKey: "brand_id",
-    as: "products",
-});
-
-Product.belongsTo(Warehouse, {
-    foreignKey: {
-        allowNull: false,
-        name: "warehouse_id",
-    },
-    as: "warehouse",
-});
-
-Warehouse.hasMany(Product, {
-    foreignKey: "warehouse_id",
-    as: "products",
-});
 
 export default Product;

@@ -1,19 +1,21 @@
 import { Optional, Model, DataTypes } from "sequelize";
 import sequelizeConnection from "../config";
-import User from "./user-model.sequelize";
-import { Warehouse } from "./warehouse-model.sequelize";
+
+export type StockMode = "manual" | "auto";
 
 export interface InventoryAttributes {
     id: string;
     name: string;
     lowStockThreshold: number;
-    // settings: object | null;
+    stockMode: StockMode;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface InventoryCreationAttributes
-    extends Optional<InventoryAttributes, "id"> {}
+export interface InventoryCreationAttributes extends Optional<
+    InventoryAttributes,
+    "id"
+> {}
 
 export class Inventory
     extends Model<InventoryAttributes, InventoryCreationAttributes>
@@ -22,7 +24,7 @@ export class Inventory
     public id!: string;
     public name!: string;
     public lowStockThreshold!: number;
-    // public settings!: object | null;
+    public stockMode!: StockMode;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -46,39 +48,19 @@ Inventory.init(
             defaultValue: 5,
             field: "inventory_low_stock_threshold",
         },
-        // settings: {
-        //     type: DataTypes.JSON,
-        //     allowNull: true,
-        //     field: "inventory_settings",
-        // },
+        stockMode: {
+            type: DataTypes.ENUM("manual", "auto"),
+            allowNull: false,
+            defaultValue: "manual",
+            field: "inventory_stock_mode",
+        },
     },
     {
         sequelize: sequelizeConnection,
         tableName: "inventories",
         updatedAt: "inventory_updated_at",
         createdAt: "inventory_created_at",
-    }
+    },
 );
-
-Inventory.belongsTo(User, {
-    foreignKey: {
-        name: "owner_user_id",
-        allowNull: false,
-    },
-    as: "owner",
-});
-
-Warehouse.belongsTo(Inventory, {
-    foreignKey: {
-        name: "inventory_id",
-        allowNull: false,
-    },
-    as: "inventory",
-});
-
-Inventory.hasMany(Warehouse, {
-    foreignKey: "inventory_id",
-    as: "warehouses",
-});
 
 export default Inventory;

@@ -1,10 +1,17 @@
 import { Optional, Model, DataTypes } from "sequelize";
 import sequelizeConnection from "../config";
 
+export type EntryType =
+    | "purchase"
+    | "return"
+    | "donation"
+    | "transfer"
+    | "adjustment";
+
 export interface EntryAttributes {
     id: string;
     entryNumber: string;
-    entryType: "purchase" | "return" | "adjustment" | "donation";
+    entryType: EntryType;
     notes: string;
     status: "pending" | "completed" | "canceled" | "rejected";
     rejectionReason?: string;
@@ -13,8 +20,10 @@ export interface EntryAttributes {
     updatedAt?: Date;
 }
 
-export interface EntryCreationAttributes
-    extends Optional<EntryAttributes, "id"> {}
+export interface EntryCreationAttributes extends Optional<
+    EntryAttributes,
+    "id"
+> {}
 
 export class Entry
     extends Model<EntryAttributes, EntryCreationAttributes>
@@ -22,7 +31,7 @@ export class Entry
 {
     public id!: string;
     public entryNumber!: string;
-    public entryType!: "purchase" | "return" | "adjustment";
+    public entryType!: EntryType;
     public notes!: string;
     public status!: "pending" | "completed" | "canceled" | "rejected";
     public rejectionReason?: string;
@@ -46,7 +55,13 @@ Entry.init(
             field: "entry_number",
         },
         entryType: {
-            type: DataTypes.ENUM("purchase", "return", "adjustment"),
+            type: DataTypes.ENUM(
+                "purchase",
+                "return",
+                "donation",
+                "transfer",
+                "adjustment",
+            ),
             allowNull: false,
             field: "entry_type",
         },
@@ -60,7 +75,7 @@ Entry.init(
                 "pending",
                 "completed",
                 "canceled",
-                "rejected"
+                "rejected",
             ),
             allowNull: false,
             defaultValue: "pending",
@@ -82,5 +97,7 @@ Entry.init(
         tableName: "entries",
         updatedAt: "entry_updated_at",
         createdAt: "entry_created_at",
-    }
+    },
 );
+
+export default Entry;

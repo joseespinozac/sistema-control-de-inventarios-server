@@ -1,4 +1,9 @@
 export interface NewBrandDto {
-    brandName: string;
-    brandDescription: string;
+    name: string;
+    description?: string;
+}
+
+export interface UpdateBrandDto {
+    name?: string;
+    description?: string;
 }

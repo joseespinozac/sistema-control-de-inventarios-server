@@ -2,7 +2,10 @@ export interface NewProductDto {
     name: string;
     description: string;
     unitQty: number;
-    stock: number;
+    min_stock?: number;
+    max_stock?: number;
+    profit_margin?: number;
+    currentPrice?: number;
     sku: string;
     barcode: string;
     isActive: boolean;
@@ -15,7 +18,10 @@ export interface UpdateProductDto {
     name?: string;
     description?: string;
     unitQty?: number;
-    stock?: number;
+    min_stock?: number;
+    max_stock?: number;
+    profit_margin?: number;
+    currentPrice?: number;
     sku?: string;
     barcode?: string;
     isActive?: boolean;

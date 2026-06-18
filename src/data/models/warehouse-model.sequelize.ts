@@ -1,11 +1,10 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
-import User from "./user-model.sequelize";
-import Inventory from "./inventory-model.sequelize";
 
 export interface WarehouseAttributes {
     id: string;
     name: string;
+    code: string;
     description: string;
     location: string;
     isActive: boolean;
@@ -13,8 +12,10 @@ export interface WarehouseAttributes {
     updatedAt?: Date;
 }
 
-export interface WarehouseCreationAttributes
-    extends Optional<WarehouseAttributes, "id"> {}
+export interface WarehouseCreationAttributes extends Optional<
+    WarehouseAttributes,
+    "id"
+> {}
 
 export class Warehouse
     extends Model<WarehouseAttributes, WarehouseCreationAttributes>
@@ -22,6 +23,7 @@ export class Warehouse
 {
     public id!: string;
     public name!: string;
+    public code!: string;
     public description!: string;
     public location!: string;
     public isActive!: boolean;
@@ -40,8 +42,12 @@ Warehouse.init(
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: true,
             field: "warehouse_name",
+        },
+        code: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            field: "warehouse_code",
         },
         description: {
             type: DataTypes.TEXT,
@@ -65,23 +71,7 @@ Warehouse.init(
         tableName: "warehouses",
         updatedAt: "warehouse_updated_at",
         createdAt: "warehouse_created_at",
-    }
+    },
 );
-
-Warehouse.belongsTo(User, {
-    foreignKey: {
-        name: "manager_id",
-        allowNull: false,
-    },
-    as: "manager",
-});
-
-Warehouse.belongsTo(Inventory, {
-    foreignKey: {
-        name: "inventory_id",
-        allowNull: false,
-    },
-    as: "inventory",
-});
 
 export default Warehouse;

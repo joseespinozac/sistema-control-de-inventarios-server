@@ -12,11 +12,14 @@ export class TeamService {
         const team = await this.teamRepository.createTeam(newTeam);
 
         if (newTeam.membersId && newTeam.membersId.length > 0) {
-            await this.teamRepository.addUsersToTeam(team, newTeam.membersId);
+            await this.teamRepository.addUsersToTeam(
+                team,
+                newTeam.membersId.map(String)
+            );
         }
 
         if (newTeam.ownerId) {
-            await this.teamRepository.setOwner(team, newTeam.ownerId);
+            await this.teamRepository.setOwner(team, String(newTeam.ownerId));
         }
 
         return team;
@@ -37,7 +40,10 @@ export class TeamService {
         }
 
         if (updateTeam.membersId) {
-            await this.teamRepository.setUsers(team, updateTeam.membersId);
+            await this.teamRepository.setUsers(
+                team,
+                updateTeam.membersId.map(String)
+            );
         }
 
         return this.teamRepository.updateTeam(team, updateTeam);

@@ -1,10 +1,14 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
-import PurchaseItem from "./purchase-item-model.sequelize";
 
 export interface PurchaseAttributes {
     id: string;
-    supplierName: string;
+    purchaseNumber: string;
+    supplierId: string;
+    inventoryId: string;
+    paymentStatus: string;
+    paymentMethod: string;
+    currency: string;
     status: string;
     total: number;
     notes: string;
@@ -13,15 +17,22 @@ export interface PurchaseAttributes {
     updatedAt?: Date;
 }
 
-export interface PurchaseCreationAttributes
-    extends Optional<PurchaseAttributes, "id"> {}
+export interface PurchaseCreationAttributes extends Optional<
+    PurchaseAttributes,
+    "id"
+> {}
 
 class Purchase
     extends Model<PurchaseAttributes, PurchaseCreationAttributes>
     implements PurchaseAttributes
 {
     public id!: string;
-    public supplierName!: string;
+    public purchaseNumber!: string;
+    public supplierId!: string;
+    public inventoryId!: string;
+    public paymentStatus!: string;
+    public paymentMethod!: string;
+    public currency!: string;
     public status!: string;
     public total!: number;
     public notes!: string;
@@ -38,10 +49,38 @@ Purchase.init(
             defaultValue: DataTypes.UUIDV4,
             field: "purchase_id",
         },
-        supplierName: {
+        purchaseNumber: {
             type: DataTypes.STRING(100),
             allowNull: false,
-            field: "supplier_name",
+            unique: true,
+            field: "purchase_number",
+        },
+        supplierId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            field: "supplier_id",
+        },
+        inventoryId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            field: "inventory_id",
+        },
+        paymentStatus: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: "pending",
+            field: "purchase_payment_status",
+        },
+        paymentMethod: {
+            type: DataTypes.STRING(50),
+            allowNull: true,
+            field: "purchase_payment_method",
+        },
+        currency: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+            defaultValue: "MXN",
+            field: "purchase_currency",
         },
         status: {
             type: DataTypes.STRING(50),
@@ -70,17 +109,7 @@ Purchase.init(
         sequelize: sequelizeConnection,
         updatedAt: "purchase_updated_at",
         createdAt: "purchase_created_at",
-    }
+    },
 );
-
-Purchase.hasMany(PurchaseItem, {
-    foreignKey: "purchase_id",
-    as: "items",
-});
-
-PurchaseItem.belongsTo(Purchase, {
-    foreignKey: "purchase_id",
-    as: "purchase",
-});
 
 export default Purchase;

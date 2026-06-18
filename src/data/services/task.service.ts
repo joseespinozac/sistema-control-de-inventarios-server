@@ -21,10 +21,10 @@ export class TaskService {
       const task = await this.taskRepository.createTask(newTask);
       task.setStatus(1);
       if(newTask.creatorId) {
-        await task.setCreator(newTask.creatorId);
+        await task.setCreator(String(newTask.creatorId));
       }
       if(newTask.assignedId) {
-        await task.setAssignee(StringUtil.parseStringToNumber(newTask.assignedId));
+        await task.setAssignee(newTask.assignedId);
       }
       if(newTask.projectId) {
         await task.setProject(newTask.projectId);
@@ -38,7 +38,7 @@ export class TaskService {
         throw new NotFoundError('Task not found');
       }
       if(data.assignedId) {
-        await task.setAssignee(StringUtil.parseStringToNumber(data.assignedId));
+        await task.setAssignee(data.assignedId);
       }
 
       if(data.statusId) { 
@@ -68,7 +68,7 @@ export class TaskService {
         commentText: newComment.commentText,
       });
       comment.setTask(newComment.taskId);
-      comment.setOwner(newComment.ownerId);
+      comment.setOwner(String(newComment.ownerId));
       return comment;
     }
   

@@ -5,12 +5,14 @@ import routes from "./api/routes";
 import dbInit from "./data/init";
 import cors from "cors";
 import dotenv from "dotenv";
+import {
+    Request as OAuthRequest,
+    Response as OAuthResponse,
+} from "oauth2-server";
 
 const envFile = `.env.${process.env.NODE_ENV ?? "development"}`;
 
 dotenv.config({ path: envFile });
-
-import { OAuthRequest, OAuthResponse } from "oauth2-server";
 
 const port = 3000;
 
@@ -23,7 +25,7 @@ export const get = () => {
         cors({
             origin: "http://localhost:4200",
             credentials: true,
-        })
+        }),
     );
 
     // Body parsing Middleware
@@ -35,7 +37,7 @@ export const get = () => {
             secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: true,
-        })
+        }),
     );
 
     app.post("/oauth/token", (req, res, next) => {

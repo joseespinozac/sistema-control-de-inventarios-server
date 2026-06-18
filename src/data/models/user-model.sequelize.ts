@@ -18,11 +18,17 @@ interface UserAttributes {
     password: string;
     firstname: string;
     lastname: string;
+    isActive: boolean;
+    globalRole: string;
+    lastLogin?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, "id"> {
+export interface UserCreationAttributes extends Optional<
+    UserAttributes,
+    "id" | "isActive" | "globalRole" | "lastLogin"
+> {
     role?: Role;
 }
 
@@ -36,6 +42,9 @@ class User
     public password!: string;
     public firstname!: string;
     public lastname!: string;
+    public isActive!: boolean;
+    public globalRole!: string;
+    public lastLogin?: Date;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
@@ -82,6 +91,23 @@ User.init(
             allowNull: false,
             field: "user_lastname",
         },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+            field: "user_is_active",
+        },
+        globalRole: {
+            type: DataTypes.STRING(50),
+            allowNull: false,
+            defaultValue: "user",
+            field: "user_global_role",
+        },
+        lastLogin: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: "user_last_login",
+        },
     },
     {
         tableName: "user",
@@ -104,10 +130,7 @@ User.init(
                 }
             },
         },
-    }
+    },
 );
-
-User.belongsTo(Role, { foreignKey: "role_id", as: "role" });
-Role.hasMany(User, { foreignKey: "role_id", as: "user" });
 
 export default User;

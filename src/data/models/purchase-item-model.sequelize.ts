@@ -1,18 +1,21 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
-import Product from "./product.model.sequelize";
+
 export interface PurchaseItemAttributes {
     id: string;
     quantity: number;
     unitCost: number;
     totalCost: number;
     name?: string;
+    pendingProductRegister: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface PurchaseItemCreationAttributes
-    extends Optional<PurchaseItemAttributes, "id"> {}
+export interface PurchaseItemCreationAttributes extends Optional<
+    PurchaseItemAttributes,
+    "id"
+> {}
 
 class PurchaseItem
     extends Model<PurchaseItemAttributes, PurchaseItemCreationAttributes>
@@ -23,6 +26,7 @@ class PurchaseItem
     public unitCost!: number;
     public totalCost!: number;
     public name?: string;
+    public pendingProductRegister!: boolean;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -56,23 +60,19 @@ PurchaseItem.init(
             allowNull: true,
             field: "purchase_item_name",
         },
+        pendingProductRegister: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+            field: "purchase_item_pending_product_register",
+        },
     },
     {
         tableName: "purchase_item",
-        sequelize: sequelizeConnection, // This is the Sequelize instance
+        sequelize: sequelizeConnection,
         createdAt: "purchase_item_created_at",
         updatedAt: "purchase_item_updated_at",
-    }
+    },
 );
-
-Product.hasMany(PurchaseItem, {
-    foreignKey: "product_id",
-    as: "purchaseItems",
-});
-
-PurchaseItem.belongsTo(Product, {
-    foreignKey: "product_id",
-    as: "product",
-});
 
 export default PurchaseItem;

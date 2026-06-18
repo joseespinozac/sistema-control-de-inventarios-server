@@ -1,0 +1,770 @@
+{
+  "info": {
+    "name": "Sistema Control de Inventarios API",
+    "description": "Complete Postman collection for the inventory management system. All routes live under http://localhost:3000. Auth uses OAuth2 password grant. Run the `OAuth token` request first to obtain an access token, then use it as Bearer on all subsequent requests.\n\nSeeded credentials:\n- Client: clientId1 / clientSecret1\n- Users: betolafarc (email: ragest031@gmail.com / pass: ou260802) or user01..user04 (emails user01@hotmail.com .. user04@hotmail.com / pass: password)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:3000"},
+    {"key": "apiPrefix", "value": "/api/v1"},
+    {"key": "clientId", "value": "clientId1"},
+    {"key": "clientSecret", "value": "clientSecret1"},
+    {"key": "userEmail", "value": "ragest031@gmail.com"},
+    {"key": "userPassword", "value": "ou260802"},
+    {"key": "accessToken", "value": ""},
+    {"key": "userId", "value": ""},
+    {"key": "brandId", "value": ""},
+    {"key": "categoryId", "value": ""},
+    {"key": "measureUnitId", "value": ""},
+    {"key": "productId", "value": ""},
+    {"key": "supplierId", "value": ""},
+    {"key": "taxId", "value": ""},
+    {"key": "inventoryId", "value": ""},
+    {"key": "inventoryMemberId", "value": ""},
+    {"key": "warehouseId", "value": ""},
+    {"key": "warehouseMemberId", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "0 · Setup",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 · Authentication",
+      "item": [
+        {
+          "name": "Register user",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"newuser@test.com\",\n    \"password\": \"password123\",\n    \"username\": \"newuser\",\n    \"firstname\": \"New\",\n    \"lastname\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.user?.id) pm.collectionVariables.set('userId', json.user.id);",
+                  "    console.log('New user registered. userId =', json.user?.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "OAuth token (password grant)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "grant_type", "value": "password"},
+                {"key": "client_id", "value": "{{clientId}}"},
+                {"key": "client_secret", "value": "{{clientSecret}}"},
+                {"key": "username", "value": "{{userEmail}}"},
+                {"key": "password", "value": "{{userPassword}}"}
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/oauth/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["oauth", "token"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.accessToken) pm.collectionVariables.set('accessToken', json.accessToken);",
+                  "    if (json.user?.id) pm.collectionVariables.set('userId', json.user.id);",
+                  "    console.log('Got accessToken. userId =', json.user?.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 · Users",
+      "item": [
+        {
+          "name": "Search by username",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/users/search-by-username?search=user01",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "users", "search-by-username"],
+              "query": [{"key": "search", "value": "user01"}]
+            }
+          }
+        },
+        {
+          "name": "Find by email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/users/by-email?email=user01@hotmail.com",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "users", "by-email"],
+              "query": [{"key": "email", "value": "user01@hotmail.com"}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · Catalogs",
+      "item": [
+        {
+          "name": "Brands",
+          "item": [
+            {
+              "name": "List all brands",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/brands/all", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "brands", "all"]}
+              }
+            },
+            {
+              "name": "Create brand",
+              "request": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Bosch\",\n    \"description\": \"Herramientas y electrodomésticos\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/brands", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "brands"]}
+              },
+              "event": [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": [
+                  "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('brandId', j.data.id);"
+                ]}
+              }]
+            },
+            {
+              "name": "Get brand by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/brands?id={{brandId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "brands"], "query": [{"key": "id", "value": "{{brandId}}"}]}
+              }
+            },
+            {
+              "name": "Update brand",
+              "request": {
+                "method": "PUT",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Bosch Professional\",\n    \"description\": \"Línea profesional de herramientas\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/brands?id={{brandId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "brands"], "query": [{"key": "id", "value": "{{brandId}}"}]}
+              }
+            },
+            {
+              "name": "Delete brand",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/brands?id={{brandId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "brands"], "query": [{"key": "id", "value": "{{brandId}}"}]}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "List all categories",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/categories/all", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "categories", "all"]}
+              }
+            },
+            {
+              "name": "Create category",
+              "request": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"categoryName\": \"Ferretería\",\n    \"categoryDescription\": \"Herramientas y materiales de construcción\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/categories", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "categories"]}
+              },
+              "event": [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": [
+                  "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('categoryId', j.data.id);"
+                ]}
+              }]
+            },
+            {
+              "name": "Get category by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/categories?id={{categoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "categories"], "query": [{"key": "id", "value": "{{categoryId}}"}]}
+              }
+            },
+            {
+              "name": "Update category",
+              "request": {
+                "method": "PUT",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"categoryName\": \"Ferretería y Construcción\",\n    \"categoryDescription\": \"Materiales, herramientas y accesorios\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/categories?id={{categoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "categories"], "query": [{"key": "id", "value": "{{categoryId}}"}]}
+              }
+            },
+            {
+              "name": "Delete category",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/categories?id={{categoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "categories"], "query": [{"key": "id", "value": "{{categoryId}}"}]}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Measure Units",
+          "item": [
+            {
+              "name": "List all measure units",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/measure-units/all", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "measure-units", "all"]}
+              }
+            },
+            {
+              "name": "Create measure unit",
+              "request": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"measureUnitName\": \"Caja\",\n    \"measureUnitAbbrev\": \"cja\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/measure-units", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "measure-units"]}
+              },
+              "event": [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": [
+                  "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('measureUnitId', j.data.id);"
+                ]}
+              }]
+            },
+            {
+              "name": "Get measure unit by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/measure-units?id={{measureUnitId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "measure-units"], "query": [{"key": "id", "value": "{{measureUnitId}}"}]}
+              }
+            },
+            {
+              "name": "Update measure unit",
+              "request": {
+                "method": "PUT",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"measureUnitName\": \"Caja (12 u)\",\n    \"measureUnitAbbrev\": \"cja12\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/measure-units?id={{measureUnitId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "measure-units"], "query": [{"key": "id", "value": "{{measureUnitId}}"}]}
+              }
+            },
+            {
+              "name": "Delete measure unit",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/measure-units?id={{measureUnitId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "measure-units"], "query": [{"key": "id", "value": "{{measureUnitId}}"}]}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Suppliers",
+          "item": [
+            {
+              "name": "List all suppliers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/suppliers/all", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "suppliers", "all"]}
+              }
+            },
+            {
+              "name": "Create supplier",
+              "request": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Distribuidora SA de CV\",\n    \"contactName\": \"Juan Pérez\",\n    \"phone\": \"555-1234-567\",\n    \"email\": \"ventas@distribuidora.com\",\n    \"address\": \"Av. Insurgentes Sur 1234, CDMX\",\n    \"isActive\": true\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/suppliers", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "suppliers"]}
+              },
+              "event": [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": [
+                  "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('supplierId', j.data.id);"
+                ]}
+              }]
+            },
+            {
+              "name": "Get supplier by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/suppliers?id={{supplierId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "suppliers"], "query": [{"key": "id", "value": "{{supplierId}}"}]}
+              }
+            },
+            {
+              "name": "Update supplier",
+              "request": {
+                "method": "PUT",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"phone\": \"555-9999-000\",\n    \"contactName\": \"Juan Pérez Hernández\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/suppliers?id={{supplierId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "suppliers"], "query": [{"key": "id", "value": "{{supplierId}}"}]}
+              }
+            },
+            {
+              "name": "Delete supplier",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/suppliers?id={{supplierId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "suppliers"], "query": [{"key": "id", "value": "{{supplierId}}"}]}
+              }
+            }
+          ]
+        },
+        {
+          "name": "Taxes",
+          "item": [
+            {
+              "name": "List all taxes",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/taxes/all", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "taxes", "all"]}
+              }
+            },
+            {
+              "name": "Create tax",
+              "request": {
+                "method": "POST",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"code\": \"IVA_FRONTERA8\",\n    \"name\": \"IVA zona fronteriza 8%\",\n    \"taxType\": \"VAT\",\n    \"rate\": 0.08,\n    \"isActive\": true\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/taxes", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "taxes"]}
+              },
+              "event": [{
+                "listen": "test",
+                "script": {"type": "text/javascript", "exec": [
+                  "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('taxId', j.data.id);"
+                ]}
+              }]
+            },
+            {
+              "name": "Get tax by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/taxes?id={{taxId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "taxes"], "query": [{"key": "id", "value": "{{taxId}}"}]}
+              }
+            },
+            {
+              "name": "Update tax",
+              "request": {
+                "method": "PUT",
+                "header": [{"key": "Content-Type", "value": "application/json"}],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"rate\": 0.10,\n    \"name\": \"IVA zona fronteriza 10% (actualizado)\"\n}"
+                },
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/taxes?id={{taxId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "taxes"], "query": [{"key": "id", "value": "{{taxId}}"}]}
+              }
+            },
+            {
+              "name": "Delete tax",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {"raw": "{{baseUrl}}{{apiPrefix}}/taxes?id={{taxId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "taxes"], "query": [{"key": "id", "value": "{{taxId}}"}]}
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 · Products",
+      "item": [
+        {
+          "name": "Create product (multipart with images)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "name", "value": "Taladro Inalámbrico 18V", "type": "text"},
+                {"key": "description", "value": "Taladro con batería de litio, 2 velocidades, maletín incluido", "type": "text"},
+                {"key": "unitQty", "value": "1", "type": "text"},
+                {"key": "min_stock", "value": "5", "type": "text"},
+                {"key": "max_stock", "value": "100", "type": "text"},
+                {"key": "profit_margin", "value": "30.00", "type": "text"},
+                {"key": "currentPrice", "value": "1899.00", "type": "text"},
+                {"key": "sku", "value": "TAL-18V-001", "type": "text"},
+                {"key": "barcode", "value": "7501031311309", "type": "text"},
+                {"key": "isActive", "value": "true", "type": "text"},
+                {"key": "categoryId", "value": "{{categoryId}}", "type": "text"},
+                {"key": "brandId", "value": "{{brandId}}", "type": "text"},
+                {"key": "measureUnitId", "value": "{{measureUnitId}}", "type": "text"}
+              ]
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/products", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "products"]}
+          },
+          "event": [{
+            "listen": "test",
+            "script": {"type": "text/javascript", "exec": [
+              "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('productId', j.data.id);"
+            ]}
+          }]
+        },
+        {
+          "name": "Get product by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/products?id={{productId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "products"], "query": [{"key": "id", "value": "{{productId}}"}]}
+          }
+        },
+        {
+          "name": "Update product",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {"key": "name", "value": "Taladro Inalámbrico 20V (Pro)"},
+                {"key": "currentPrice", "value": "2199.00"},
+                {"key": "isActive", "value": "true"}
+              ]
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/products?id={{productId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "products"], "query": [{"key": "id", "value": "{{productId}}"}]}
+          }
+        },
+        {
+          "name": "List paginated products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{apiPrefix}}/products/list?limit=10&offset=0&sort=createdAt:DESC&filter[isActive]=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["{{apiPrefix}}", "products", "list"],
+              "query": [
+                {"key": "limit", "value": "10"},
+                {"key": "offset", "value": "0"},
+                {"key": "sort", "value": "createdAt:DESC"},
+                {"key": "filter[isActive]", "value": "true"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete product",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/products?id={{productId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "products"], "query": [{"key": "id", "value": "{{productId}}"}]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 · Inventories",
+      "item": [
+        {
+          "name": "List my inventories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/list", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "list"]}
+          }
+        },
+        {
+          "name": "Create inventory",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Almacén Central CDMX\",\n    \"lowStockThreshold\": 10,\n    \"stockMode\": \"manual\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories"]}
+          },
+          "event": [{
+            "listen": "test",
+            "script": {"type": "text/javascript", "exec": [
+              "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('inventoryId', j.data.id);"
+            ]}
+          }]
+        },
+        {
+          "name": "Get inventory by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}"]}
+          }
+        },
+        {
+          "name": "Update inventory (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Almacén Central CDMX (Sur)\",\n    \"lowStockThreshold\": 15,\n    \"stockMode\": \"auto\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}"]}
+          }
+        },
+        {
+          "name": "Delete inventory (owner only)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 · Inventory Members",
+      "item": [
+        {
+          "name": "Add member (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"00000000-0000-0000-0000-000000000000\",\n    \"role\": \"editor\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/members", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "members"]}
+          },
+          "event": [{
+            "listen": "test",
+            "script": {"type": "text/javascript", "exec": [
+              "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('inventoryMemberId', j.data.id);"
+            ]}
+          }]
+        },
+        {
+          "name": "List members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/members", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "members"]}
+          }
+        },
+        {
+          "name": "Update member role (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"role\": \"admin\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/members/{{inventoryMemberId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "members", "{{inventoryMemberId}}"]}
+          }
+        },
+        {
+          "name": "Remove member (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/members/{{inventoryMemberId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "members", "{{inventoryMemberId}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 · Warehouses",
+      "item": [
+        {
+          "name": "Create warehouse (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Sucursal Norte\",\n    \"code\": \"WH-NORTE-01\",\n    \"description\": \"Almacén principal zona norte\",\n    \"location\": \"Monterrey, Nuevo León\",\n    \"isActive\": true,\n    \"managerId\": \"00000000-0000-0000-0000-000000000000\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/warehouses", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "warehouses"]}
+          },
+          "event": [{
+            "listen": "test",
+            "script": {"type": "text/javascript", "exec": [
+              "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('warehouseId', j.data.id);"
+            ]}
+          }]
+        },
+        {
+          "name": "List warehouses by inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/inventories/{{inventoryId}}/warehouses", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "inventories", "{{inventoryId}}", "warehouses"]}
+          }
+        },
+        {
+          "name": "Get warehouse by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}"]}
+          }
+        },
+        {
+          "name": "Update warehouse",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Sucursal Norte (Bodega A)\",\n    \"isActive\": true\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}"]}
+          }
+        },
+        {
+          "name": "Delete warehouse",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "8 · Warehouse Members",
+      "item": [
+        {
+          "name": "Assign warehouse member (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"userId\": \"00000000-0000-0000-0000-000000000000\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}/members", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}", "members"]}
+          },
+          "event": [{
+            "listen": "test",
+            "script": {"type": "text/javascript", "exec": [
+              "const j = pm.response.json(); if (j.data?.id) pm.collectionVariables.set('warehouseMemberId', j.data.id);"
+            ]}
+          }]
+        },
+        {
+          "name": "List warehouse members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}/members", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}", "members"]}
+          }
+        },
+        {
+          "name": "Remove warehouse member (admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "{{baseUrl}}{{apiPrefix}}/warehouses/{{warehouseId}}/members/{{warehouseMemberId}}", "host": ["{{baseUrl}}"], "path": ["{{apiPrefix}}", "warehouses", "{{warehouseId}}", "members", "{{warehouseMemberId}}"]}
+          }
+        }
+      ]
+    }
+  ]
+}

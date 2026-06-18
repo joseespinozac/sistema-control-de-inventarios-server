@@ -6,11 +6,11 @@ export class TeamRepository {
         return Team.create(data);
     }
 
-    async addUsersToTeam(team: Team, userIds: number[]) {
+    async addUsersToTeam(team: Team, userIds: string[]) {
         return team.addUsers(userIds);
     }
 
-    async setOwner(team: Team, ownerId: number) {
+    async setOwner(team: Team, ownerId: string) {
         return team.setOwner(ownerId);
     }
 
@@ -41,7 +41,7 @@ export class TeamRepository {
         return team.update(data);
     }
 
-    async setUsers(team: Team, userIds: number[]) {
+    async setUsers(team: Team, userIds: string[]) {
         return team.setUsers(userIds);
     }
 

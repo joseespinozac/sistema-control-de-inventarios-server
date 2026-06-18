@@ -25,7 +25,7 @@ export class ProductController {
                 : [];
             const newProduct = await this.productService.createProduct(
                 requestBody,
-                images
+                images,
             );
 
             res.status(201).json({
@@ -39,18 +39,18 @@ export class ProductController {
 
     updateProduct = async (req: Request, res: Response) => {
         try {
-            const productId = Number.parseInt(req.query.id as string);
-            if (Number.isNaN(productId)) {
+            const productId = req.query.id as string;
+            if (!productId) {
                 throw new BadRequestError("Invalid product ID");
             }
             const files = (req.files as Express.Multer.File[]) || [];
             const requestBody: UpdateProductDto = req.body;
             requestBody.newImages = files.map(
-                (file) => `/uploads/${file.filename}`
+                (file) => `/uploads/${file.filename}`,
             );
             const updatedProduct = await this.productService.updateProduct(
                 productId,
-                requestBody
+                requestBody,
             );
             res.status(200).json({
                 message: "Product updated",
@@ -63,8 +63,8 @@ export class ProductController {
 
     deleteProduct = async (req: Request, res: Response) => {
         try {
-            const productId = parseInt(req.query.id as string);
-            if (isNaN(productId)) {
+            const productId = req.query.id as string;
+            if (!productId) {
                 throw new BadRequestError("Invalid product ID");
             }
             await this.productService.deleteProduct(productId);
@@ -78,8 +78,8 @@ export class ProductController {
 
     getProductById = async (req: Request, res: Response) => {
         try {
-            const productId = parseInt(req.query.id as string);
-            if (isNaN(productId)) {
+            const productId = req.query.id as string;
+            if (!productId) {
                 throw new BadRequestError("Invalid product ID");
             }
             const product = await this.productService.getProduct(productId);

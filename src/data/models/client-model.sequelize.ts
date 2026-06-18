@@ -8,8 +8,10 @@ interface ClientAttributes {
     redirectUris: string;
 }
 
-export interface ClientCreationAttributes
-    extends Optional<ClientAttributes, "clientId"> {}
+export interface ClientCreationAttributes extends Optional<
+    ClientAttributes,
+    "clientId"
+> {}
 
 class Client
     extends Model<ClientAttributes, ClientCreationAttributes>
@@ -23,9 +25,8 @@ class Client
 Client.init(
     {
         clientId: {
-            type: DataTypes.UUID,
+            type: DataTypes.STRING(255),
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4,
         },
         clientSecret: {
             type: DataTypes.STRING,
@@ -46,7 +47,7 @@ Client.init(
     {
         tableName: "clients",
         sequelize: sequelizeConnection,
-    }
+    },
 );
 
 export default Client;

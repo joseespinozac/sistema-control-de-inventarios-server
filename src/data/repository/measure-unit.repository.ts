@@ -5,7 +5,7 @@ export class MeasureUnitRepository {
         return MeasureUnit.create(data);
     }
 
-    async findMeasureUnitById(measureUnitId: number) {
+    async findMeasureUnitById(measureUnitId: string) {
         return await MeasureUnit.findByPk(measureUnitId);
     }
 

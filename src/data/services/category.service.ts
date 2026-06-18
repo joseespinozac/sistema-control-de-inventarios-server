@@ -1,4 +1,5 @@
-import { NewCategoryDto } from "../../api/interfaces/request_dto/category.dto";
+import { NewCategoryDto, UpdateCategoryDto } from "../../api/interfaces/request_dto/category.dto";
+import { NotFoundError } from "../../errors/NotFoundError";
 import { CategoryRepository } from "../repository/category.repository";
 
 export class CategoryService {
@@ -9,14 +10,36 @@ export class CategoryService {
     }
 
     async createCategory(newCategoryDto: NewCategoryDto) {
-        const category = await this.categoryRePository.createCategory(
-            newCategoryDto
-        );
+        return this.categoryRePository.createCategory({
+            name: newCategoryDto.categoryName,
+            description: newCategoryDto.categoryDescription,
+        });
+    }
+
+    async getCategoryById(id: string) {
+        const category = await this.categoryRePository.findCategoryById(id);
+        if (!category) {
+            throw new NotFoundError("Category not found");
+        }
         return category;
     }
 
     async getAllCategories() {
-        const categories = await this.categoryRePository.getAllCategories();
-        return categories;
+        return this.categoryRePository.getAllCategories();
+    }
+
+    async updateCategory(id: string, dto: UpdateCategoryDto) {
+        const category = await this.getCategoryById(id);
+        return category.update({
+            ...(dto.categoryName !== undefined && { name: dto.categoryName }),
+            ...(dto.categoryDescription !== undefined && {
+                description: dto.categoryDescription,
+            }),
+        });
+    }
+
+    async deleteCategory(id: string) {
+        const category = await this.getCategoryById(id);
+        await category.destroy();
     }
 }

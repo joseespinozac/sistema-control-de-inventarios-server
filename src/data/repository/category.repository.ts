@@ -4,7 +4,7 @@ export class CategoryRepository {
         return Category.create(data);
     }
 
-    async findCategoryById(categoryId: number) {
+    async findCategoryById(categoryId: string) {
         return await Category.findByPk(categoryId);
     }
 

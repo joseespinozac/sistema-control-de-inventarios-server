@@ -1,22 +1,32 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelizeConnection from "../config";
 
+export type MovementType =
+    | "IN"
+    | "OUT"
+    | "ADJUSTMENT"
+    | "TRANSFER_IN"
+    | "TRANSFER_OUT";
+
 export interface InventoryMovementAttributes {
     id: string;
-    movementType: "inbound" | "outbound" | "adjustment" | "transfer";
+    movementType: MovementType;
     quantity: number;
     groupId: string;
     reason: string;
     notes: string;
-    status: "pending" | "approved" | "canceled";
-    reference_type?: string;
-    reference_id?: string;
+    status: "draft" | "approved" | "cancelled";
+    referenceType?: string;
+    referenceId?: string;
+    approvedAt?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface InventoryMovementCreationAttributes
-    extends Optional<InventoryMovementAttributes, "id"> {}
+export interface InventoryMovementCreationAttributes extends Optional<
+    InventoryMovementAttributes,
+    "id"
+> {}
 
 export class InventoryMovement
     extends Model<
@@ -26,14 +36,15 @@ export class InventoryMovement
     implements InventoryMovementAttributes
 {
     public id!: string;
-    public movementType!: "inbound" | "outbound" | "adjustment" | "transfer";
+    public movementType!: MovementType;
     public quantity!: number;
     public groupId!: string;
     public reason!: string;
     public notes!: string;
-    public status!: "pending" | "approved" | "canceled";
-    public reference_type?: string;
-    public reference_id?: string;
+    public status!: "draft" | "approved" | "cancelled";
+    public referenceType?: string;
+    public referenceId?: string;
+    public approvedAt?: Date;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 }
@@ -48,10 +59,11 @@ InventoryMovement.init(
         },
         movementType: {
             type: DataTypes.ENUM(
-                "inbound",
-                "outbound",
-                "adjustment",
-                "transfer"
+                "IN",
+                "OUT",
+                "ADJUSTMENT",
+                "TRANSFER_IN",
+                "TRANSFER_OUT",
             ),
             allowNull: false,
             field: "inventory_movement_type",
@@ -77,20 +89,25 @@ InventoryMovement.init(
             field: "inventory_movement_notes",
         },
         status: {
-            type: DataTypes.ENUM("pending", "approved", "canceled"),
+            type: DataTypes.ENUM("draft", "approved", "cancelled"),
             allowNull: false,
-            defaultValue: "pending",
+            defaultValue: "draft",
             field: "inventory_movement_status",
         },
-        reference_type: {
+        referenceType: {
             type: DataTypes.STRING,
             allowNull: true,
             field: "inventory_movement_reference_type",
         },
-        reference_id: {
+        referenceId: {
             type: DataTypes.UUID,
             allowNull: true,
             field: "inventory_movement_reference_id",
+        },
+        approvedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: "inventory_movement_approved_at",
         },
     },
     {
@@ -98,5 +115,7 @@ InventoryMovement.init(
         tableName: "inventory_movements",
         updatedAt: "inventory_movement_updated_at",
         createdAt: "inventory_movement_created_at",
-    }
+    },
 );
+
+export default InventoryMovement;

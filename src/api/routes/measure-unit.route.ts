@@ -10,8 +10,20 @@ MeasureUnitRouter.post(
     asyncHandler(measureUnitController.createMeasureUnit)
 );
 MeasureUnitRouter.get(
+    "/",
+    asyncHandler(measureUnitController.getMeasureUnitById)
+);
+MeasureUnitRouter.get(
     "/all",
     asyncHandler(measureUnitController.getAllMeasureUnits)
+);
+MeasureUnitRouter.put(
+    "/",
+    asyncHandler(measureUnitController.updateMeasureUnit)
+);
+MeasureUnitRouter.delete(
+    "/",
+    asyncHandler(measureUnitController.deleteMeasureUnit)
 );
 
 export default MeasureUnitRouter;

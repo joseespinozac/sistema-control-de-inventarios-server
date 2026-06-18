@@ -1,7 +1,5 @@
 import { Optional, Model, DataTypes } from "sequelize";
 import sequelizeConnection from "../config";
-import { Inventory } from "./inventory-model.sequelize";
-import User from "./user-model.sequelize";
 
 export interface InventoryMemberAttributes {
     id: string;
@@ -10,8 +8,10 @@ export interface InventoryMemberAttributes {
     updatedAt?: Date;
 }
 
-export interface InventoryMemberCreationAttributes
-    extends Optional<InventoryMemberAttributes, "id"> {}
+export interface InventoryMemberCreationAttributes extends Optional<
+    InventoryMemberAttributes,
+    "id"
+> {}
 
 export class InventoryMember
     extends Model<InventoryMemberAttributes, InventoryMemberCreationAttributes>
@@ -42,19 +42,7 @@ InventoryMember.init(
         tableName: "inventory_members",
         updatedAt: "inventory_member_updated_at",
         createdAt: "inventory_member_created_at",
-    }
+    },
 );
-
-User.belongsToMany(Inventory, {
-    through: InventoryMember,
-    foreignKey: "user_id",
-    as: "memberOfInventories",
-});
-
-Inventory.belongsToMany(User, {
-    through: InventoryMember,
-    foreignKey: "inventory_id",
-    as: "members",
-});
 
 export default InventoryMember;

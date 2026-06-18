@@ -13,7 +13,7 @@ export class ProductRepository {
     async updateProduct(
         product: Product,
         updatedProduct: UpdateProductDto,
-        updatedImages: string[]
+        updatedImages: string[],
     ) {
         console.log("Images before update:", product.images);
         console.log("New images array:", updatedImages);
@@ -46,7 +46,7 @@ export class ProductRepository {
         return product;
     }
 
-    async findProductById(productId: number) {
+    async findProductById(productId: string) {
         return await Product.findByPk(productId, {
             include: [
                 { model: Category, as: "category" },
